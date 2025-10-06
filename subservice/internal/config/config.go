@@ -16,6 +16,10 @@ type Config struct {
 	DatabaseConfig struct {
 		Url string `mapstructure:"url"`
 	} `mapstructure:"sub-database-config"`
+
+	MigrationsPath struct {
+		Path string `mapstructure:"path"`
+	} `mapstructure:"sub-migrate-config"`
 }
 
 func LoadConfig(path string) (Config, error) {

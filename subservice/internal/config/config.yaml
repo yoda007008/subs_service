@@ -3,3 +3,6 @@ sub-service:
 
 sub-database:
   url: "postgres://postgres:112233@localhost:5444/subscriptions?sslmode=disable"
+
+migrations-path:
+  path: "/home/kirill/GolandProjects/subs/subservice/internal/migrations"
