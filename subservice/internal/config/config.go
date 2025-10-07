@@ -11,15 +11,15 @@ import (
 type Config struct {
 	SubServiceConfig struct {
 		Port string `mapstructure:"port"`
-	} `mapstructure:"sub-service-config"`
+	} `mapstructure:"sub-service"`
 
 	DatabaseConfig struct {
 		Url string `mapstructure:"url"`
-	} `mapstructure:"sub-database-config"`
+	} `mapstructure:"sub-database"`
 
 	MigrationsPath struct {
 		Path string `mapstructure:"path"`
-	} `mapstructure:"sub-migrate-config"`
+	} `mapstructure:"migrations-path"`
 }
 
 func LoadConfig(path string) (Config, error) {
