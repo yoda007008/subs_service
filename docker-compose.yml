@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres
+    container_name: sub_database
+    ports:
+      - "5444:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 112233
+      POSTGRES_DB: subscriptions
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
