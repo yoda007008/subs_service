@@ -15,24 +15,11 @@ type Handler struct {
 	svc *service.Service
 }
 
-// todo refactor this method
-//func parseMonthYear(s string) (int, int, error) {
-//
-//
-//	parts := strings.Split(s, "-")
-//	if len(parts) != 2 {
-//		return 0, 0, fmt.Errorf("bad")
-//	}
-//	m, _ := strconv.Atoi(parts[0])
-//	y, _ := strconv.Atoi(parts[1])
-//	return m, y, nil
-//}
-
 func NewHandler(db *sqlx.DB) *Handler {
-	return &Handler{service.NewHandler(db)}
+	return &Handler{service.InitMethod(db)}
 }
 
-func (h *Handler) CreateSub(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateSub(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateSubscriptionRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -55,8 +42,6 @@ func (h *Handler) CreateSub(w http.ResponseWriter, r *http.Request) {
 	m := int(t.Month())
 	y := t.Year()
 
-	//m, y, _ := parseMonthYear(req.StartDate)
-
 	sub := &dto.Subscription{
 		ID:          uuid.New(),
 		ServiceName: req.ServiceName,
@@ -74,4 +59,44 @@ func (h *Handler) CreateSub(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(sub)
+}
+
+func (h *Handler) HandleSumSubs(w http.ResponseWriter, r *http.Request) {
+	var req dto.SumSubsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	if req.From == "" || req.To == "" {
+		http.Error(w, "from and to required", http.StatusBadRequest)
+		return
+	}
+
+	fromTime, err := time.Parse("2006-01", req.From)
+	if err != nil {
+		http.Error(w, "invalid from format", http.StatusBadRequest)
+		return
+	}
+
+	toTime, err := time.Parse("2006-01", req.To)
+	if err != nil {
+		http.Error(w, "invalid to format", http.StatusBadRequest)
+		return
+	}
+
+	total, err := h.svc.SumSubs(
+		req.UserID,
+		req.ServiceName,
+		fromTime.Year(),
+		int(fromTime.Month()),
+		toTime.Year(),
+		int(toTime.Month()),
+	)
+	if err != nil {
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]int64{"total": total})
 }

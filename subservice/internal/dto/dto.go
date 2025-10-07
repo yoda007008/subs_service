@@ -31,3 +31,18 @@ type CreateSubscriptionRequest struct {
 	StartDate   string `json:"start_date"`
 	EndDate     string `json:"end_date,omitempty"`
 }
+
+type RowUpdate struct {
+	Price      int           `db:"price"`
+	StartMonth int           `db:"start_month"`
+	StartYear  int           `db:"start_year"`
+	EndMonth   sql.NullInt64 `db:"end_month"`
+	EndYear    sql.NullInt64 `db:"end_year"`
+}
+
+type SumSubsRequest struct {
+	From        string `json:"from"`
+	To          string `json:"to"`
+	UserID      string `json:"user_id"`
+	ServiceName string `json:"service_name"`
+}
