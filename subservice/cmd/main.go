@@ -31,8 +31,6 @@ func main() {
 	// todo init base urls and paths
 	DATABASE_URL := cfg.DatabaseConfig.Url
 	MIGRATIONS_PATH := cfg.MigrationsPath.Path
-	//fmt.Println(DATABASE_URL)
-	//fmt.Println(MIGRATIONS_PATH)
 
 	// todo run migrations
 	if err := migrator.RunMigrations(DATABASE_URL, MIGRATIONS_PATH); err != nil { // run migrations
@@ -41,10 +39,10 @@ func main() {
 	}
 
 	// todo connect database
-	logger.Info("connect to database")
+	logger.Debug("Connect to database")
 	db, err := connect.NewPostgres(DATABASE_URL)
 	if err != nil {
-		logger.Info("connect db")
+		logger.Info("Connect db")
 		os.Exit(1)
 	}
 	defer db.Close()
@@ -52,28 +50,28 @@ func main() {
 	// todo init handlers
 	router := router.Router(&cfg, db)
 
-	// todo run service with graceful shutdown
+	// todo run service in goroutine with graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
 		if err := router.ListenAndServe(); err != nil {
-			if err.Error() != "http: Server closed" {
-				logger.Error("don't run this http server")
+			if err.Error() != "Http: Server closed" {
+				logger.Error("Don't run this http server")
 			}
 		}
 	}()
 
-	logger.Info("server started on %s", cfg.SubServiceConfig.Port)
+	logger.Info("Server started on", "port", cfg.SubServiceConfig.Port)
 
 	<-ctx.Done()
 
-	logger.Info("shutting down")
+	logger.Info("Shutting down")
 	ctxShutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := router.Shutdown(ctxShutdown); err != nil {
-		logger.Info("shutdown")
+		logger.Info("Shutdown")
 	}
 
-	logger.Info("graceful shutdown complete")
+	logger.Info("Graceful shutdown complete")
 }
