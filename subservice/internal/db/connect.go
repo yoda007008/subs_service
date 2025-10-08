@@ -10,10 +10,8 @@ func NewPostgres(dsn string) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	// set reasonable pool settings
+
 	db.SetMaxOpenConns(25)
 	db.SetMaxIdleConns(5)
 	return db, nil
 }
-
-// todo close connection to db
