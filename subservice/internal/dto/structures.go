@@ -6,14 +6,6 @@ import (
 	"time"
 )
 
-// для удобства тестирования функционала приложения
-type SubsMethods interface {
-	CreateSubscription()
-	UpdateSubscription(id int)
-	GetSubscription()
-	DeleteSubscription(id int)
-}
-
 type Subscription struct {
 	ID          uuid.UUID     `db:"id" json:"id"`
 	ServiceName string        `db:"service_name" json:"service_name"`
