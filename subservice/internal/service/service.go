@@ -50,7 +50,6 @@ func (s *Service) SumSubs(userID, serviceName string, fromYear, fromMonth, toYea
 			endIdx = int(rec.EndYear.Int64)*12 + int(rec.EndMonth.Int64) - 1
 		}
 
-		// пересечение с периодом запроса
 		overlapStart := max(startIdx, fromIdx)
 		overlapEnd := min(endIdx, toIdx)
 		if overlapEnd >= overlapStart {
@@ -60,4 +59,15 @@ func (s *Service) SumSubs(userID, serviceName string, fromYear, fromMonth, toYea
 	}
 
 	return total, nil
+}
+
+func (s *Service) GetSubs() ([]dto.Subscription, error) {
+	q := `SELECT id, service_name, price, user_id, start_month, start_year, end_month, end_year, created_at 
+	      FROM subscriptions`
+
+	var subs []dto.Subscription
+	if err := s.db.Select(&subs, q); err != nil {
+		return nil, err
+	}
+	return subs, nil
 }

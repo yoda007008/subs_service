@@ -100,3 +100,15 @@ func (h *Handler) HandleSumSubs(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(map[string]int64{"total": total})
 }
+
+func (h *Handler) GetSubs(w http.ResponseWriter, r *http.Request) {
+	subs, err := h.svc.GetSubs()
+	if err != nil {
+		slog.Error("failed to get subscriptions", "error", err)
+		http.Error(w, "failed to get subscriptions", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(subs)
+}

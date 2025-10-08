@@ -3,6 +3,7 @@ package dto
 import (
 	"database/sql"
 	"github.com/google/uuid"
+	"time"
 )
 
 // для удобства тестирования функционала приложения
@@ -22,6 +23,7 @@ type Subscription struct {
 	StartMonth  int           `db:"start_month" json:"start_month"`
 	EndYear     sql.NullInt64 `db:"end_year" json:"end_year,omitempty"`
 	EndMonth    sql.NullInt64 `db:"end_month" json:"end_month,omitempty"`
+	CrearedAt   time.Time     `db:"created_at" json:"created_at"`
 }
 
 type CreateSubscriptionRequest struct {

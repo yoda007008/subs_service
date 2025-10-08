@@ -21,6 +21,7 @@ func Router(cfg *config.Config, db *sqlx.DB) *http.Server {
 	//mux.HandleFunc("/subscriptions/summary", h.HandleSummary)
 	mux.HandleFunc("/create_sub", h.HandleCreateSub)
 	mux.HandleFunc("/sum_subs", h.HandleSumSubs)
+	mux.HandleFunc("/get_all_subs", h.GetSubs)
 
 	srv := &http.Server{
 		Addr:         cfg.SubServiceConfig.Port,
