@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+// @title Subscription Service API
+// @version 1.0
+// @description API for managing user subscriptions
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// todo init logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))

@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/jmoiron/sqlx"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log/slog"
 	"net/http"
 	"subs/subservice/internal/config"
@@ -19,6 +20,8 @@ func Router(cfg *config.Config, db *sqlx.DB) *http.Server {
 	mux.HandleFunc("/get_all_subs", h.GetSubs)
 	mux.HandleFunc("/update_sub", h.UpdateSub)
 	mux.HandleFunc("/delete_sub", h.DeleteSub)
+
+	http.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.SubServiceConfig.Port,

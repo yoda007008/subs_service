@@ -7,15 +7,15 @@ import (
 )
 
 type Subscription struct {
-	ID          uuid.UUID     `db:"id" json:"id"`
-	ServiceName string        `db:"service_name" json:"service_name"`
-	Price       int           `db:"price" json:"price"`
-	UserID      uuid.UUID     `db:"user_id" json:"user_id"`
-	StartYear   int           `db:"start_year" json:"start_year"`
-	StartMonth  int           `db:"start_month" json:"start_month"`
-	EndYear     sql.NullInt64 `db:"end_year" json:"end_year,omitempty"`
-	EndMonth    sql.NullInt64 `db:"end_month" json:"end_month,omitempty"`
-	CreatedAt   time.Time     `db:"created_at" json:"created_at"`
+	ID          uuid.UUID `db:"id" json:"id"`
+	ServiceName string    `db:"service_name" json:"service_name"`
+	Price       int       `db:"price" json:"price"`
+	UserID      uuid.UUID `db:"user_id" json:"user_id"`
+	StartYear   int       `db:"start_year" json:"start_year"`
+	StartMonth  int       `db:"start_month" json:"start_month"`
+	EndYear     *int      `db:"end_year" json:"end_year,omitempty"`
+	EndMonth    *int      `db:"end_month" json:"end_month,omitempty"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
 }
 
 type CreateSubscriptionRequest struct {

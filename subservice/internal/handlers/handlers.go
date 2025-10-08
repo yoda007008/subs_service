@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -20,6 +19,17 @@ func NewHandler(db *sqlx.DB) *Handler {
 	return &Handler{service.InitMethod(db)}
 }
 
+// CreateSub godoc
+// @Summary Create new subscription
+// @Description Create a new subscription for user
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param input body dto.CreateSubscriptionRequest true "Subscription data"
+// @Success 201 {object} dto.Subscription
+// @Failure 400 {string} string "Bad Request"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /create_sub [post]
 func (h *Handler) HandleCreateSub(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateSubscriptionRequest
 
@@ -62,6 +72,17 @@ func (h *Handler) HandleCreateSub(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(sub)
 }
 
+// HandleSumSubs godoc
+// @Summary Get total subscription sum
+// @Description Returns the total amount spent on subscriptions for a given user, service, and period.
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param input body dto.SumSubsRequest true "Sum subscriptions request"
+// @Success 200 {object} map[string]int64 "Total sum"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /sum_subs [post]
 func (h *Handler) HandleSumSubs(w http.ResponseWriter, r *http.Request) {
 	var req dto.SumSubsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -102,6 +123,14 @@ func (h *Handler) HandleSumSubs(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int64{"total": total})
 }
 
+// GetSubs godoc
+// @Summary Get all subscriptions
+// @Description Returns list of all subscriptions
+// @Tags subscriptions
+// @Produce json
+// @Success 200 {array} dto.Subscription
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /get_all_subs [get]
 func (h *Handler) GetSubs(w http.ResponseWriter, r *http.Request) {
 	subs, err := h.svc.GetSubs()
 	if err != nil {
@@ -113,6 +142,17 @@ func (h *Handler) GetSubs(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(subs)
 }
 
+// UpdateSub godoc
+// @Summary Update subscription
+// @Description Update subscription fields by ID (JSON body)
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param input body dto.UpdateSubscriptionRequest true "Updated data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {string} string "Bad Request"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /update_sub [put]
 func (h *Handler) UpdateSub(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateSubscriptionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -132,12 +172,15 @@ func (h *Handler) UpdateSub(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	endMonth := int(endTime.Month())
+	endYear := endTime.Year()
+
 	sub := dto.Subscription{
 		ID:          id,
 		ServiceName: req.ServiceName,
 		Price:       req.Price,
-		EndMonth:    sql.NullInt64{Int64: int64(endTime.Month()), Valid: true},
-		EndYear:     sql.NullInt64{Int64: int64(endTime.Year()), Valid: true},
+		EndMonth:    &endMonth,
+		EndYear:     &endYear,
 	}
 
 	if err := h.svc.Update(sub); err != nil {
@@ -150,6 +193,17 @@ func (h *Handler) UpdateSub(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
 }
 
+// DeleteSub godoc
+// @Summary Delete subscription
+// @Description Delete subscription by ID (from JSON body)
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param input body dto.DeleteSubscriptionRequest true "Subscription ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {string} string "Bad Request"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /delete_sub [delete]
 func (h *Handler) DeleteSub(w http.ResponseWriter, r *http.Request) {
 	var req dto.DeleteSubscriptionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
