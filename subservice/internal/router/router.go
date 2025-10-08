@@ -5,6 +5,7 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 	"log/slog"
 	"net/http"
+	_ "subs/docs"
 	"subs/subservice/internal/config"
 	"subs/subservice/internal/handlers"
 	"subs/subservice/internal/middleware"
@@ -21,7 +22,7 @@ func Router(cfg *config.Config, db *sqlx.DB) *http.Server {
 	mux.HandleFunc("/update_sub", h.UpdateSub)
 	mux.HandleFunc("/delete_sub", h.DeleteSub)
 
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.SubServiceConfig.Port,
