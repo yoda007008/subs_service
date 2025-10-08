@@ -1,0 +1,21 @@
+CREATE
+{
+  "service_name": "Netflix Premium",
+  "price": 999,
+  "user_id": "123e4567-e89b-12d3-a456-426614174000",
+  "start_date": "2025-10-07",
+  "end_date": "2026-10-07"
+}
+
+UPDATE
+{
+  "id": "8a3a5154-1b1b-4d17-9a73-2dc4c153a321",
+  "service_name": "Netflix Ultra",
+  "price": 1499,
+  "end_date": "2026-12-31"
+}
+
+DELETE
+{
+  "id": "8a3a5154-1b1b-4d17-9a73-2dc4c153a321"
+}
