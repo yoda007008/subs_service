@@ -14,14 +14,11 @@ func Router(cfg *config.Config, db *sqlx.DB) *http.Server {
 	mux := http.NewServeMux()
 	h := handlers.NewHandler(db)
 
-	// todo this methods realization
-	// CRUDL
-	//mux.HandleFunc("/subscriptions", h.HandleSubscriptions)     // POST, GET (list)
-	//mux.HandleFunc("/subscriptions/", h.HandleSubscriptionByID) // GET, PUT, DELETE
-	//mux.HandleFunc("/subscriptions/summary", h.HandleSummary)
 	mux.HandleFunc("/create_sub", h.HandleCreateSub)
 	mux.HandleFunc("/sum_subs", h.HandleSumSubs)
 	mux.HandleFunc("/get_all_subs", h.GetSubs)
+	mux.HandleFunc("/update_sub", h.UpdateSub)
+	mux.HandleFunc("/delete_sub", h.DeleteSub)
 
 	srv := &http.Server{
 		Addr:         cfg.SubServiceConfig.Port,

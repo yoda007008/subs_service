@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -104,11 +105,75 @@ func (h *Handler) HandleSumSubs(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetSubs(w http.ResponseWriter, r *http.Request) {
 	subs, err := h.svc.GetSubs()
 	if err != nil {
-		slog.Error("failed to get subscriptions", "error", err)
 		http.Error(w, "failed to get subscriptions", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(subs)
+}
+
+func (h *Handler) UpdateSub(w http.ResponseWriter, r *http.Request) {
+	var req dto.UpdateSubscriptionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	id, err := uuid.Parse(req.ID)
+	if err != nil {
+		http.Error(w, "invalid or missing id", http.StatusBadRequest)
+		return
+	}
+
+	endTime, err := time.Parse("2006-01-02", req.EndDate)
+	if err != nil {
+		http.Error(w, "invalid end_date format", http.StatusBadRequest)
+		return
+	}
+
+	sub := dto.Subscription{
+		ID:          id,
+		ServiceName: req.ServiceName,
+		Price:       req.Price,
+		EndMonth:    sql.NullInt64{Int64: int64(endTime.Month()), Valid: true},
+		EndYear:     sql.NullInt64{Int64: int64(endTime.Year()), Valid: true},
+	}
+
+	if err := h.svc.Update(sub); err != nil {
+		http.Error(w, "failed to update", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
+}
+
+func (h *Handler) DeleteSub(w http.ResponseWriter, r *http.Request) {
+	var req dto.DeleteSubscriptionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "invalid json body", http.StatusBadRequest)
+		return
+	}
+
+	if req.ID == "" {
+		http.Error(w, "missing id", http.StatusBadRequest)
+		return
+	}
+
+	id, err := uuid.Parse(req.ID)
+	if err != nil {
+		http.Error(w, "invalid id format", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.svc.Delete(id); err != nil {
+		http.Error(w, "failed to delete", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "deleted"})
 }

@@ -48,3 +48,14 @@ type SumSubsRequest struct {
 	UserID      string `json:"user_id"`
 	ServiceName string `json:"service_name"`
 }
+
+type UpdateSubscriptionRequest struct {
+	ID          string `json:"id"`
+	ServiceName string `json:"service_name"`
+	Price       int    `json:"price"`
+	EndDate     string `json:"end_date"`
+}
+
+type DeleteSubscriptionRequest struct {
+	ID string `json:"id"`
+}

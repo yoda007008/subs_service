@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"subs/subservice/internal/dto"
@@ -70,4 +71,20 @@ func (s *Service) GetSubs() ([]dto.Subscription, error) {
 		return nil, err
 	}
 	return subs, nil
+}
+
+func (s *Service) Update(sub dto.Subscription) error {
+	q := `
+		UPDATE subscriptions 
+		SET service_name = $1, price = $2, end_month = $3, end_year = $4
+		WHERE id = $5
+	`
+	_, err := s.db.Exec(q, sub.ServiceName, sub.Price, sub.EndMonth, sub.EndYear, sub.ID)
+	return err
+}
+
+func (s *Service) Delete(id uuid.UUID) error {
+	q := `DELETE FROM subscriptions WHERE id = $1`
+	_, err := s.db.Exec(q, id)
+	return err
 }
