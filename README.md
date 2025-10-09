@@ -21,7 +21,7 @@ POST /sum_subs — суммировать стоимость подписок п
 
 1. Клонируйте репозиторий
 ```plaitext
-git clone <url_repo>
+git clone https://github.com/yoda007008/subs_service
 cd subs
 ```
 
