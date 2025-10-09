@@ -25,8 +25,8 @@ func main() {
 	slog.SetDefault(logger)
 
 	// todo init config
-	configPath := flag.String("config", "/home/kirill/GolandProjects/subs/subservice/internal/config/config.yaml", "path to config file")
-
+	configPath := flag.String("config", "internal/config/config.yaml", "path to config file")
+	// /home/kirill/GolandProjects/subs/subservice/internal/config/config.yam
 	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
 		logger.Error("error load config path", "err", "path not found")

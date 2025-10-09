@@ -2,7 +2,9 @@ sub-service:
   port: ":8080"
 
 sub-database:
-  url: "postgres://postgres:112233@localhost:5444/subscriptions?sslmode=disable"
+  url: "postgres://postgres:112233@database:5432/subscriptions?sslmode=disable"
 
 migrations-path:
-  path: "/home/kirill/GolandProjects/subs/subservice/internal/migrations"
+  path: "/internal/migrations"
+#  /home/kirill/GolandProjects/subs/subservice/internal/migrations
+# url: "postgres://postgres:112233@localhost:5444/subscriptions?sslmode=disable"
